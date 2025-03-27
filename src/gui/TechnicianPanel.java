@@ -1,3 +1,4 @@
+// Enhanced Technician Panel with Stack and Export Button
 package gui;
 
 import algorithms.TicketSorter;
@@ -11,7 +12,10 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class TechnicianPanel extends JFrame {
@@ -19,11 +23,12 @@ public class TechnicianPanel extends JFrame {
     private DefaultTableModel tableModel;
     private JTextField searchField;
     private AVLTree avlTree;
+    private Stack<Ticket> historyStack = new Stack<>();
 
     public TechnicianPanel() {
         setTitle("Technician - View Tickets");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1100, 550);
+        setSize(1200, 600);
         setLocationRelativeTo(null);
 
         avlTree = new AVLTree();
@@ -54,6 +59,7 @@ public class TechnicianPanel extends JFrame {
         JButton searchButton = new JButton("Search");
         JButton refreshButton = new JButton("Refresh");
         JButton sortButton = new JButton("Sort by SLA & Priority");
+        JButton exportButton = new JButton("Export Tickets");
 
         JComboBox<String> avlSearchBox = new JComboBox<>();
         for (Ticket ticket : TicketManager.getInstance().getAllTickets()) {
@@ -67,6 +73,7 @@ public class TechnicianPanel extends JFrame {
         buttonPanel.add(sortButton);
         buttonPanel.add(avlSearchBox);
         buttonPanel.add(avlSearchButton);
+        buttonPanel.add(exportButton);
 
         topPanel.add(new JLabel("Search by ID or Name:"), BorderLayout.WEST);
         topPanel.add(searchField, BorderLayout.CENTER);
@@ -91,6 +98,18 @@ public class TechnicianPanel extends JFrame {
             List<Ticket> sorted = TicketManager.getInstance().getAllTickets();
             TicketSorter.mergeSort(sorted);
             populateTable(sorted);
+        });
+
+        exportButton.addActionListener(e -> {
+            try (FileWriter writer = new FileWriter("tickets_export.csv")) {
+                writer.write("ID,Client,Priority,Status,SLA\n");
+                for (Ticket t : TicketManager.getInstance().getAllTickets()) {
+                    writer.write(t.getId() + "," + t.getClientName() + "," + t.getPriority() + "," + t.getStatus() + "," + t.getSlaHours() + "\n");
+                }
+                JOptionPane.showMessageDialog(this, "Tickets exported successfully!");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Export failed: " + ex.getMessage());
+            }
         });
 
         searchButton.addActionListener(e -> {
@@ -126,6 +145,7 @@ public class TechnicianPanel extends JFrame {
                                 .filter(t -> t.getId().equals(id))
                                 .findFirst().orElse(null);
                         if (ticket != null) {
+                            historyStack.push(ticket);
                             new TicketDetailView(ticket, TechnicianPanel.this::refreshTable);
                         }
                     }

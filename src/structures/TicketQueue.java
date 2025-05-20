@@ -2,10 +2,7 @@ package structures;
 
 import model.Ticket;
 
-/**
- * A custom FIFO queue to manage ticket intake order.
- * Demonstrates abstract data structure implementation.
- */
+
 public class TicketQueue {
     private static class Node {
         Ticket data;
@@ -25,9 +22,7 @@ public class TicketQueue {
         this.size = 0;
     }
 
-    /**
-     * Adds a ticket to the back of the queue. O(1)
-     */
+
     public void enqueue(Ticket ticket) {
         Node node = new Node(ticket);
         if (rear == null) {
@@ -39,9 +34,7 @@ public class TicketQueue {
         size++;
     }
 
-    /**
-     * Removes and returns the ticket at the front. O(1)
-     */
+
     public Ticket dequeue() {
         if (front == null) return null;
         Ticket temp = front.data;
@@ -51,9 +44,7 @@ public class TicketQueue {
         return temp;
     }
 
-    /**
-     * Returns the ticket at the front without removing it. O(1)
-     */
+
     public Ticket peek() {
         return (front != null) ? front.data : null;
     }

@@ -2,9 +2,7 @@ package structures;
 
 import model.Ticket;
 
-/**
- * AVL Tree implementation for storing and searching Tickets by SLA.
- */
+
 public class AVLTree {
     class Node {
         Ticket ticket;

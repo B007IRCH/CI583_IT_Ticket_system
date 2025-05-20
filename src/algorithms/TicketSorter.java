@@ -3,10 +3,7 @@ package algorithms;
 import model.Ticket;
 import java.util.List;
 
-/**
- * Sorts tickets using Merge Sort algorithm.
- * Demonstrates recursion and O(n log n) complexity.
- */
+
 public class TicketSorter {
 
     public static void mergeSort(List<Ticket> list) {
@@ -54,18 +51,14 @@ public class TicketSorter {
         }
     }
 
-    /**
-     * Compares two tickets based on SLA first, then priority if needed.
-     */
+
     private static int compareTickets(Ticket a, Ticket b) {
         int slaCompare = Integer.compare(a.getSlaHours(), b.getSlaHours());
         if (slaCompare != 0) return slaCompare;
         return priorityValue(a.getPriority()) - priorityValue(b.getPriority());
     }
 
-    /**
-     * Converts priority levels to numeric values.
-     */
+
     private static int priorityValue(String priority) {
         return switch (priority.toLowerCase()) {
             case "critical" -> 1;
